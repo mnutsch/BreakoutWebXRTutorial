@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Breakout VR</title>
+    <meta name="description" content="Breakout VR • A-Frame">
+    
+	<!-- Basic A-Frame library -->
+	<script src="aframe.js"></script>
+	
+	<!-- Needed to add Test -->
+	<script src="aframe-text-component.min.js"></script>
+	
+	<script>
+		
+		//detect whether or not the user's browser supports WebGL		
+		function webgl_support() //source: http://stackoverflow.com/questions/11871077/proper-way-to-detect-webgl-support 
+		{ 
+			try
+			{ 
+			var canvas = document.createElement( 'canvas' ); 
+			return !! window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ); 
+			}
+			catch( e ) 
+			{ 
+			return false; 
+			} 
+		}; 
+		if(!webgl_support()) 
+		{ 
+			alert("Sorry, but your browser does not support WebGL. Please update your browser settings or use a different browser."); 
+		}
+		
+		function getRandomColor() //source: http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript
+		{
+			var letters = '0123456789ABCDEF';
+			var color = '#';
+			for (var i = 0; i < 6; i++ ) 
+			{
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+			return color;
+		}
+		
+		//wait until the page loads to perform the following
+		window.onload = function () 
+		{
+			var gameIsOn = 0;
+		
+			var intervalLength = 25; //determines the speed of the game
+			
+			var topBorder = 3.5;
+			var bottomBorder = 0.25;
+			var rightBorder = 1.8;
+			var leftBorder = -1.8;
+
+			var scene = document.querySelector('a-scene');
+			
+			//Create the game ball
+			var gameBall = document.createElement('a-sphere');
+			var gameBallX = 0;
+			var gameBallY = 1.25;
+			var gameBallZ = -1;
+			var gameBallVelocityX = 0.05;
+			var gameBallVelocityY = 0.1;
+			var gameBallRadius = 0.15;
+			gameBall.setAttribute('color', '#EF2D5E');
+			//gameBall.setAttribute('color', getRandomColor());
+			gameBall.setAttribute('radius', gameBallRadius);
+			console.log(gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
+			gameBall.setAttribute('position', gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
+			scene.appendChild(gameBall);
+			
+			//Create a mesh for the game ball
+			var gameBallMesh = document.createElement('a-box');
+			var gameBallMeshWidth = 0.3;
+			gameBallMesh.setAttribute('color', 'blue');
+			gameBallMesh.setAttribute('width', gameBallMeshWidth);
+			gameBallMesh.setAttribute('height', '0.3');
+			gameBallMesh.setAttribute('depth', '0.3');
+			var gameBallMeshX = 0;
+			var gameBallMeshY = 1.25;
+			var gameBallMeshZ = -1;
+			var gameBallMeshVelocityX = 0.05;
+			var gameBallMeshVelocityY = 0.1;
+			console.log(gameBallMeshX + ' ' + gameBallMeshY + ' ' + gameBallMeshZ);
+			gameBallMesh.setAttribute('position', gameBallMeshX + ' ' + gameBallMeshY + ' ' + gameBallMeshZ);
+			scene.appendChild(gameBallMesh);
+			gameBallMesh.setAttribute('opacity', '0');
+			
+			//create the paddle
+			var gamePaddle = document.createElement('a-box');
+			var gamePaddleX = 0;
+			var gamePaddleY = 0.3;
+			var gamePaddleVelocityX = 0;
+			var gamePaddleZ = -1;
+			var gamePaddleWidth = 1;
+			var gamePaddleHeight = 0.2;
+			var gamePaddleDepth = 0.2;
+			var gamePaddleColor = '#42f4aa';
+			
+			gamePaddle.setAttribute('width', gamePaddleWidth);
+			gamePaddle.setAttribute('height', gamePaddleHeight);
+			gamePaddle.setAttribute('depth', gamePaddleDepth);
+			gamePaddle.setAttribute('color', gamePaddleColor);
+			//gamePaddle.setAttribute('color', getRandomColor());
+			
+			scene.appendChild(gamePaddle);
+			gamePaddle.setAttribute('position', gamePaddleX + ' ' + gamePaddleY + ' ' + gamePaddleZ);
+			
+			//create the game blocks
+			
+			//arrays to hold the blocks and their positions
+			var gameBlocks = []; //objects
+			var gameBlocksX = []; //block x positions
+			var gameBlocksY = []; //block y positions
+			var gameBlocksZ = []; //block z positions
+			var gameBlocksActive = []; //whether the block is active
+			
+			var blockWidth = 0.8;
+			var blockHeight = 0.2;
+			var blockDepth = 0.2;
+			var blockColor = '#4CC3D9';
+			
+			//declare the blocks and their attributes
+			for (i = 0; i < 12; i++) 
+			{
+				gameBlocks[i] = document.createElement('a-box');
+				gameBlocks[i].setAttribute('width', blockWidth);
+				gameBlocks[i].setAttribute('height', blockHeight);
+				gameBlocks[i].setAttribute('depth', blockDepth);
+				gameBlocks[i].setAttribute('color', blockColor);
+				//gameBlocks[i].setAttribute('color', getRandomColor());
+				gameBlocksActive[i] = "1";
+			}
+
+			//set the position of the blocks
+			
+			//Top row
+			gameBlocksX[0] = -1.5;
+			gameBlocksY[0] = 3.5;
+			gameBlocksZ[0] = -1;
+			
+			gameBlocksX[1] = -0.5;
+			gameBlocksY[1] = 3.5;
+			gameBlocksZ[1] = -1;
+			
+			gameBlocksX[2] = 0.5
+			gameBlocksY[2] = 3.5;
+			gameBlocksZ[2] = -1;
+			
+			gameBlocksX[3] = 1.5;
+			gameBlocksY[3] = 3.5;
+			gameBlocksZ[3] = -1;
+			
+			//Middle row
+			gameBlocksX[4] = -1.5;
+			gameBlocksY[4] = 3;
+			gameBlocksZ[4] = -1;
+			
+			gameBlocksX[5] = -0.5;
+			gameBlocksY[5] = 3;
+			gameBlocksZ[5] = -1;
+			
+			gameBlocksX[6] = 0.5
+			gameBlocksY[6] = 3;
+			gameBlocksZ[6] = -1;
+			
+			gameBlocksX[7] = 1.5;
+			gameBlocksY[7] = 3;
+			gameBlocksZ[7] = -1;
+			
+			//Bottom row
+			gameBlocksX[8] = -1.5;
+			gameBlocksY[8] = 2.5;
+			gameBlocksZ[8] = -1;
+			
+			gameBlocksX[9] = -0.5;
+			gameBlocksY[9] = 2.5;
+			gameBlocksZ[9] = -1;
+			
+			gameBlocksX[10] = 0.5
+			gameBlocksY[10] = 2.5;
+			gameBlocksZ[10] = -1;
+			
+			gameBlocksX[11] = 1.5;
+			gameBlocksY[11] = 2.5;
+			gameBlocksZ[11] = -1;
+			
+			//add the blocks to the scene
+			for (i = 0; i < 12; i++) 
+			{
+				scene.appendChild(gameBlocks[i]);
+				gameBlocks[i].setAttribute('position', gameBlocksX[i] + ' ' + gameBlocksY[i] + ' ' + gameBlocksZ[i]);
+			}
+			
+			//function to rest the blocks
+			function resetBlocks()
+			{
+				for (i = 0; i < 12; i++) 
+				{
+					gameBlocksActive[i] = "1";
+					gameBlocks[i].setAttribute('opacity', '1');
+				}
+			}	
+			
+			//function to check if all blocks are broken, return true if so
+			function checkBlocks()
+			{
+				var returnValue = 1;
+				for (i = 0; i < 12; i++) 
+				{
+					if(gameBlocksActive[i] == "1")
+						returnValue = 0;
+				}
+				return returnValue;
+			}	
+		
+			
+			//Display the score		
+			var scoreValue = 0;
+			var scoreText = document.createElement('a-entity');
+			scoreText.setAttribute('mixin', 'blue');
+			scene.appendChild(scoreText);
+			scoreText.setAttribute('text', 'text: Score: ' + scoreValue);
+			scoreText.setAttribute('position', '-3.5 3.8 -0.8');
+			scoreText.setAttribute('size', '0.75');
+			
+			//Display the player's lives
+			var livesValue = 3;
+			var livesText = document.createElement('a-entity');
+			livesText.setAttribute('mixin', 'blue');
+			scene.appendChild(livesText);
+			livesText.setAttribute('text', 'text: Lives: ' + livesValue);
+			livesText.setAttribute('position', '1.4 3.8 -0.8');
+			livesText.setAttribute('size', '0.75');
+			
+			//<!-- Game Over text. -->
+			var gameOverText = document.createElement('a-entity');
+			gameOverText.setAttribute('mixin', 'red');
+			scene.appendChild(gameOverText);
+			gameOverText.setAttribute('text', 'text: Game Over');
+			gameOverText.setAttribute('position', '-1.8 2 0');
+			gameOverText.setAttribute('size', '0.75');
+			gameOverText.setAttribute('material', 'opacity: 0');
+			
+			//<!-- You Win text. -->
+			var youWinText = document.createElement('a-entity');
+			youWinText.setAttribute('mixin', 'green');
+			scene.appendChild(youWinText);
+			youWinText.setAttribute('text', 'text: You Win');
+			youWinText.setAttribute('position', '-1.3 2 0');
+			youWinText.setAttribute('size', '0.75');
+			youWinText.setAttribute('material', 'opacity: 0');
+			
+			//<!-- Start Game text. -->
+			var startGameText = document.createElement('a-entity');
+			startGameText.setAttribute('mixin', 'green');
+			scene.appendChild(startGameText);
+			startGameText.setAttribute('text', 'text: Start');
+			startGameText.setAttribute('position', '-0.75 0 0.5');
+			startGameText.setAttribute('rotation', '-15 0 0');
+			startGameText.setAttribute('size', '0.75');
+			startGameText.setAttribute('material', 'opacity: 1');
+			
+			//for debug purposes
+			function dump(obj) 
+			{
+				var out = '';
+				for (var i in obj) {
+					out += i + ": " + obj[i] + "\n";
+				}	
+				//alert(out);
+				console.log(out);
+			}
+			//dump(myCamera.getAttribute('rotation'));
+			
+			function moveObjects()
+			{
+				//move the game ball
+				gameBallX = gameBallX + gameBallVelocityX;
+				gameBallY = gameBallY + gameBallVelocityY;
+				gameBallMeshX = gameBallMeshX + gameBallMeshVelocityX;
+				gameBallMeshY = gameBallMeshY + gameBallMeshVelocityY;
+				
+				//move the paddle
+				gamePaddleX = (myCamera.getAttribute('rotation').y / -19) * 1.25;
+				if(gamePaddleX < -1.25)
+				{
+					gamePaddleX = -1.25;
+				}
+				if(gamePaddleX > 1.25)
+				{
+					gamePaddleX = 1.25;
+				}
+			}
+			
+			function checkCollisions()
+			{
+				//console.log("Checking collisions.");
+			
+				//checking border collisions
+				if(gameBallY >= topBorder)
+				{
+					gameBallVelocityY = gameBallVelocityY * -1;
+					gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
+					gameBallY = gameBallY - 0.1; //to help prevent ball getting stuck
+				}
+				
+				if(gameBallY <= bottomBorder)
+				{
+					gameBallVelocityY = gameBallVelocityY * -1;
+					gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
+					gameBallY = gameBallY + 0.1; //to help prevent balls getting stuck
+					
+					if(gameIsOn == 1)
+					{
+						livesValue = livesValue - 1;
+						livesText.setAttribute('text', 'text: Lives: ' + livesValue);
+					
+						if(livesValue == 0)
+						{
+							gameIsOn = 0;
+							
+							gameOverText.setAttribute('material', 'opacity: .75');
+						}
+					}
+				}
+				
+				if(gameBallX >= rightBorder)
+				{
+					gameBallVelocityX = gameBallVelocityX * -1;
+					gameBallMeshVelocityX = gameBallMeshVelocityX * -1;
+				}
+				
+				if(gameBallX <= leftBorder)
+				{
+					gameBallVelocityX = gameBallVelocityX * -1;
+					gameBallMeshVelocityX = gameBallMeshVelocityX * -1;
+				}
+				
+				//checking block collisions
+				for (i = 0; i < 12; i++) 
+				{
+					//console.log("Checking gameBall against gameBlock " + i);
+					
+					//block collisions
+					if( ((gameBallY + (gameBallRadius * .8)) >= (gameBlocksY[i] - blockHeight)) && ((gameBallY - (gameBallRadius * .8)) <= (gameBlocksY[i])) && ((gameBallX + (gameBallRadius * .8)) >= (gameBlocksX[i]))  && ((gameBallX - (gameBallRadius * .8)) <= (gameBlocksX[i] + blockWidth)) && (gameBlocksActive[i] == "1"))
+					{
+						gameBallVelocityY = gameBallVelocityY * -1;
+						gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
+						
+						gameBlocksActive[i] = "0"; //mark the block as broken
+						gameBlocks[i].setAttribute('opacity', '0'); //hide the block
+						
+						if(checkBlocks())
+						{
+							resetBlocks();
+						}
+						
+						if(gameIsOn == 1)
+						{
+							scoreValue = scoreValue + 1;
+							scoreText.setAttribute('text', 'text: Score: ' + scoreValue);
+							
+							if(scoreValue == 12)
+							{
+								gameIsOn = 0;
+								youWinText.setAttribute('material', 'opacity: 1');
+							}
+						}
+						
+						//console.log("Collision of gameBall and gameBlock " + i);
+					}
+				}
+				
+				//checking paddle collisions		
+				//block collisions
+				if( ((gameBallY + (gameBallRadius * .8)) >= (gamePaddleY - gamePaddleHeight)) && ((gameBallY - (gameBallRadius * .8)) <= (gamePaddleY) && ((gameBallX + (gameBallRadius * .8)) >= (gamePaddleX - gamePaddleWidth * .5))  && ((gameBallX - (gameBallRadius * .8)) <= (gamePaddleX + gamePaddleWidth *.5))))
+				{
+					gameBallVelocityY = gameBallVelocityY * -1;
+					gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
+					//console.log("Collision of gameBall and paddle");
+				}
+			}
+			
+			
+			
+			//Timer for game
+			setInterval(function()
+			{
+				dump(myCamera.getAttribute('rotation'));
+				//console.log(myCamera.getAttribute('rotation').y);
+				
+				checkCollisions();
+				moveObjects();
+				//gamePaddle.setAttribute('position', gamePaddleX, + ' ' + gamePaddleY + ' ' + gamePaddleZ);
+				gamePaddle.setAttribute('position', gamePaddleX + ' ' + gamePaddleY + ' ' + gamePaddleZ);
+			
+				gameBall.setAttribute('position', gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
+				gameBallMesh.setAttribute('position', gameBallMeshX + ' ' + gameBallMeshY + ' ' + gameBallMeshZ);
+				
+				
+			}, intervalLength);
+			
+		}
+	</script>
+	
+  </head>
+  <body>
+    <a-scene>
+		
+		<!-- Mixins. -->
+		<a-assets>
+			<a-mixin id="red" material="color: red"></a-mixin>
+			<a-mixin id="green" material="color: green"></a-mixin>
+			<a-mixin id="blue" material="color: blue; opacity: 0.5"></a-mixin>
+			<a-mixin id="cube" geometry="primitive: box"></a-mixin>
+		</a-assets>
+		
+		<!-- set game background planes. -->
+		<a-plane rotation="-90 0 0" width="4" height="4" color="#a0a0a0"></a-plane>
+		<a-plane position="0 2 -2" rotation="0 0 0" width="4" height="4" color="#bfabce"></a-plane>
+		
+		<!-- set a transparent plane for detecting raycasts -->
+		<a-plane id="raycastPlane" class="collidable" position="0 2 -1" rotation="0 0 0" width="4" height="4" color="#bfabce" opacity="0"></a-plane>
+			
+		<!-- sky color. -->
+		<!--<a-sky color="#000000"></a-sky>-->
+		<a-sky src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/city.jpg"></a-sky>
+		
+		<!-- Set camera starting position. -->
+		<a-entity position="0 0 3.8">
+			<a-camera look-controls id="myCamera">
+				<a-cursor id="cursor" material="color: gray; opacity: 0.5">
+					<!--event-set__1="_event: mouseenter; color: springgreen"
+					event-set__2="_event: mouseleave; color: black"
+					raycaster="objects: .all">-->
+				</a-cursor>
+			</a-camera>
+		</a-entity>
+		
+		<!-- Set light position. -->
+		<a-light
+			type="directional"
+			color="#FFF"
+			intensity="0.1"
+			position="-1 1 2">
+		</a-light>
+		<a-light
+			type="ambient"
+			color="#FFF">
+		</a-light>
+		
+    </a-scene>
+
+  </body>
+</html>
