@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Breakout VR</title>
-    <meta name="description" content="Breakout VR • A-Frame">
+    <meta name="description" content="Breakout VR">
     
 	<!-- Basic A-Frame library -->
 	<script src="aframe.js"></script>
@@ -12,6 +12,16 @@
 	<script src="aframe-text-component.min.js"></script>
 	
 	<script>
+	/*******************************************************************************************************************************
+	* Name: Breakout Virtual Reality
+	* Author: Matt Nutsch
+	* Date: 11-7-2016
+	* Description: This is a virtual reality game inspired by the arcade classic "Breakout".
+	* The original Breakout was conceptualized by Nolan Bushnell and Steve Bristow, and built by Steve Wozniak and Steve Jobs in 
+	* April, 1976. This virtual reality (VR) game was created to be a tutorial in VR development using the Mozilla A-Frame library for
+	* JavaScript. To start a game the play should look center the view on the word "Start". The paddle is moved from left to right 
+	* by rotating the view left to right. The game is won by breaking all of the bricks before running out of lives.
+	********************************************************************************************************************************/
 		
 		//detect whether or not the user's browser supports WebGL		
 		function webgl_support() //source: http://stackoverflow.com/questions/11871077/proper-way-to-detect-webgl-support 
@@ -26,34 +36,21 @@
 			return false; 
 			} 
 		}; 
-		if(!webgl_support()) 
+		if(!webgl_support()) //If the browser can't display the game, then alert the user with a message.
 		{ 
 			alert("Sorry, but your browser does not support WebGL. Please update your browser settings or use a different browser."); 
-		}
-		
-		function getRandomColor() //source: http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript
-		{
-			var letters = '0123456789ABCDEF';
-			var color = '#';
-			for (var i = 0; i < 6; i++ ) 
-			{
-				color += letters[Math.floor(Math.random() * 16)];
-			}
-			return color;
 		}
 		
 		//wait until the page loads to perform the following
 		window.onload = function () 
 		{
-			var gameIsOn = 0;
-		
+			//declare variables
+			var gameIsOn = 0; //whether the game is active, controls certain functionality
 			var intervalLength = 25; //determines the speed of the game
-			
-			var topBorder = 3.5;
-			var bottomBorder = 0.25;
-			var rightBorder = 1.8;
-			var leftBorder = -1.8;
-
+			var topBorder = 3.5; //border of game area
+			var bottomBorder = 0.25; //border of game area
+			var rightBorder = 1.8; //border of game area
+			var leftBorder = -1.8; //border of game area
 			var scene = document.querySelector('a-scene');
 			
 			//Create the game ball
@@ -65,28 +62,10 @@
 			var gameBallVelocityY = 0.1;
 			var gameBallRadius = 0.15;
 			gameBall.setAttribute('color', '#EF2D5E');
-			//gameBall.setAttribute('color', getRandomColor());
 			gameBall.setAttribute('radius', gameBallRadius);
 			console.log(gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
 			gameBall.setAttribute('position', gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
 			scene.appendChild(gameBall);
-			
-			//Create a mesh for the game ball
-			var gameBallMesh = document.createElement('a-box');
-			var gameBallMeshWidth = 0.3;
-			gameBallMesh.setAttribute('color', 'blue');
-			gameBallMesh.setAttribute('width', gameBallMeshWidth);
-			gameBallMesh.setAttribute('height', '0.3');
-			gameBallMesh.setAttribute('depth', '0.3');
-			var gameBallMeshX = 0;
-			var gameBallMeshY = 1.25;
-			var gameBallMeshZ = -1;
-			var gameBallMeshVelocityX = 0.05;
-			var gameBallMeshVelocityY = 0.1;
-			console.log(gameBallMeshX + ' ' + gameBallMeshY + ' ' + gameBallMeshZ);
-			gameBallMesh.setAttribute('position', gameBallMeshX + ' ' + gameBallMeshY + ' ' + gameBallMeshZ);
-			scene.appendChild(gameBallMesh);
-			gameBallMesh.setAttribute('opacity', '0');
 			
 			//create the paddle
 			var gamePaddle = document.createElement('a-box');
@@ -103,7 +82,6 @@
 			gamePaddle.setAttribute('height', gamePaddleHeight);
 			gamePaddle.setAttribute('depth', gamePaddleDepth);
 			gamePaddle.setAttribute('color', gamePaddleColor);
-			//gamePaddle.setAttribute('color', getRandomColor());
 			
 			scene.appendChild(gamePaddle);
 			gamePaddle.setAttribute('position', gamePaddleX + ' ' + gamePaddleY + ' ' + gamePaddleZ);
@@ -130,7 +108,6 @@
 				gameBlocks[i].setAttribute('height', blockHeight);
 				gameBlocks[i].setAttribute('depth', blockDepth);
 				gameBlocks[i].setAttribute('color', blockColor);
-				//gameBlocks[i].setAttribute('color', getRandomColor());
 				gameBlocksActive[i] = "1";
 			}
 
@@ -148,11 +125,11 @@
 			gameBlocksX[2] = 0.5
 			gameBlocksY[2] = 3.5;
 			gameBlocksZ[2] = -1;
-			
+	
 			gameBlocksX[3] = 1.5;
 			gameBlocksY[3] = 3.5;
 			gameBlocksZ[3] = -1;
-			
+		
 			//Middle row
 			gameBlocksX[4] = -1.5;
 			gameBlocksY[4] = 3;
@@ -194,7 +171,7 @@
 				gameBlocks[i].setAttribute('position', gameBlocksX[i] + ' ' + gameBlocksY[i] + ' ' + gameBlocksZ[i]);
 			}
 			
-			//function to rest the blocks
+			//function to reset the blocks
 			function resetBlocks()
 			{
 				for (i = 0; i < 12; i++) 
@@ -203,6 +180,17 @@
 					gameBlocks[i].setAttribute('opacity', '1');
 				}
 			}	
+			
+			//function to reset the ball position
+			function resetBall()
+			{
+				gameBallX = 0;
+				gameBallY = 1.25;
+				gameBallZ = -1;
+				gameBallVelocityX = 0.05;
+				gameBallVelocityY = 0.1;
+				gameBall.setAttribute('position', gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
+			}
 			
 			//function to check if all blocks are broken, return true if so
 			function checkBlocks()
@@ -216,7 +204,6 @@
 				return returnValue;
 			}	
 		
-			
 			//Display the score		
 			var scoreValue = 0;
 			var scoreText = document.createElement('a-entity');
@@ -263,92 +250,89 @@
 			startGameText.setAttribute('size', '0.75');
 			startGameText.setAttribute('material', 'opacity: 1');
 			
-			//for debug purposes
-			function dump(obj) 
-			{
-				var out = '';
-				for (var i in obj) {
-					out += i + ": " + obj[i] + "\n";
-				}	
-				//alert(out);
-				console.log(out);
-			}
-			//dump(myCamera.getAttribute('rotation'));
+			//<!-- URL text. -->
+			var urlText = document.createElement('a-entity');
+			scene.appendChild(urlText);
+			urlText.setAttribute('text', 'text: www.MattNutsch.com');
+			urlText.setAttribute('mixin', 'url-red');
+			urlText.setAttribute('position', '-3.3 5 0.5');
+			urlText.setAttribute('rotation', '33 0 0');
+			urlText.setAttribute('size', '0.75');
+			urlText.setAttribute('material', 'opacity: 1');
 			
 			function moveObjects()
 			{
 				//move the game ball
 				gameBallX = gameBallX + gameBallVelocityX;
 				gameBallY = gameBallY + gameBallVelocityY;
-				gameBallMeshX = gameBallMeshX + gameBallMeshVelocityX;
-				gameBallMeshY = gameBallMeshY + gameBallMeshVelocityY;
 				
 				//move the paddle
-				gamePaddleX = (myCamera.getAttribute('rotation').y / -19) * 1.25;
-				if(gamePaddleX < -1.25)
+				if(gameIsOn == 1) //only if the game is active
 				{
-					gamePaddleX = -1.25;
-				}
-				if(gamePaddleX > 1.25)
-				{
-					gamePaddleX = 1.25;
+					gamePaddleX = (myCamera.getAttribute('rotation').y / -19) * 1.25;
+					if(gamePaddleX < -1.25)
+					{
+						gamePaddleX = -1.25;
+					}
+					if(gamePaddleX > 1.25)
+					{
+						gamePaddleX = 1.25;
+					}
 				}
 			}
 			
 			function checkCollisions()
 			{
-				//console.log("Checking collisions.");
-			
 				//checking border collisions
 				if(gameBallY >= topBorder)
 				{
 					gameBallVelocityY = gameBallVelocityY * -1;
-					gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
 					gameBallY = gameBallY - 0.1; //to help prevent ball getting stuck
 				}
-				
 				if(gameBallY <= bottomBorder)
 				{
 					gameBallVelocityY = gameBallVelocityY * -1;
-					gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
 					gameBallY = gameBallY + 0.1; //to help prevent balls getting stuck
 					
 					if(gameIsOn == 1)
 					{
 						livesValue = livesValue - 1;
 						livesText.setAttribute('text', 'text: Lives: ' + livesValue);
-					
+						resetBall();
+						
 						if(livesValue == 0)
 						{
+							//turn the game off
 							gameIsOn = 0;
 							
+							//display the Game Over text
 							gameOverText.setAttribute('material', 'opacity: .75');
+							
+							//reset the blocks
+							resetBlocks();
+							
+							//display the Start text
+							startGameText.setAttribute('material', 'opacity: .75');
 						}
 					}
 				}
-				
 				if(gameBallX >= rightBorder)
 				{
 					gameBallVelocityX = gameBallVelocityX * -1;
-					gameBallMeshVelocityX = gameBallMeshVelocityX * -1;
 				}
-				
 				if(gameBallX <= leftBorder)
 				{
 					gameBallVelocityX = gameBallVelocityX * -1;
-					gameBallMeshVelocityX = gameBallMeshVelocityX * -1;
 				}
 				
 				//checking block collisions
 				for (i = 0; i < 12; i++) 
 				{
-					//console.log("Checking gameBall against gameBlock " + i);
 					
 					//block collisions
 					if( ((gameBallY + (gameBallRadius * .8)) >= (gameBlocksY[i] - blockHeight)) && ((gameBallY - (gameBallRadius * .8)) <= (gameBlocksY[i])) && ((gameBallX + (gameBallRadius * .8)) >= (gameBlocksX[i]))  && ((gameBallX - (gameBallRadius * .8)) <= (gameBlocksX[i] + blockWidth)) && (gameBlocksActive[i] == "1"))
 					{
 						gameBallVelocityY = gameBallVelocityY * -1;
-						gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
 						
 						gameBlocksActive[i] = "0"; //mark the block as broken
 						gameBlocks[i].setAttribute('opacity', '0'); //hide the block
@@ -356,6 +340,7 @@
 						if(checkBlocks())
 						{
 							resetBlocks();
+							resetBall();
 						}
 						
 						if(gameIsOn == 1)
@@ -367,39 +352,62 @@
 							{
 								gameIsOn = 0;
 								youWinText.setAttribute('material', 'opacity: 1');
+								startGameText.setAttribute('material', 'opacity: 1');
 							}
 						}
-						
-						//console.log("Collision of gameBall and gameBlock " + i);
+
 					}
 				}
 				
 				//checking paddle collisions		
-				//block collisions
 				if( ((gameBallY + (gameBallRadius * .8)) >= (gamePaddleY - gamePaddleHeight)) && ((gameBallY - (gameBallRadius * .8)) <= (gamePaddleY) && ((gameBallX + (gameBallRadius * .8)) >= (gamePaddleX - gamePaddleWidth * .5))  && ((gameBallX - (gameBallRadius * .8)) <= (gamePaddleX + gamePaddleWidth *.5))))
 				{
 					gameBallVelocityY = gameBallVelocityY * -1;
-					gameBallMeshVelocityY = gameBallMeshVelocityY * -1;
-					//console.log("Collision of gameBall and paddle");
 				}
 			}
 			
+			//function to check if the cursor is over the start button
+			function checkIfStart()
+			{
+				var currentY = myCamera.getAttribute('rotation').y;
+				var currentX = myCamera.getAttribute('rotation').x;
+				
+				if((currentY > -12.83) && (currentY < 12.72) && (currentX > -25.55) && (currentX < -17.53))
+				{
+					//reset all game components
+					resetBall();
+					resetBlocks();
+					
+					//reset the score
+					scoreValue = 0;
+					livesValue = 3;
+					
+					//update the text
+					scoreText.setAttribute('text', 'text: Score: ' + scoreValue);	
+					livesText.setAttribute('text', 'text: Lives: ' + livesValue);
+					gameOverText.setAttribute('material', 'opacity: 0');
+					youWinText.setAttribute('material', 'opacity: 0');
+					startGameText.setAttribute('material', 'opacity: 0');
+					
+					//set the game on flag
+					gameIsOn = 1;
+				}
 			
+			}
 			
 			//Timer for game
 			setInterval(function()
 			{
-				dump(myCamera.getAttribute('rotation'));
-				//console.log(myCamera.getAttribute('rotation').y);
-				
 				checkCollisions();
 				moveObjects();
-				//gamePaddle.setAttribute('position', gamePaddleX, + ' ' + gamePaddleY + ' ' + gamePaddleZ);
-				gamePaddle.setAttribute('position', gamePaddleX + ' ' + gamePaddleY + ' ' + gamePaddleZ);
-			
-				gameBall.setAttribute('position', gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
-				gameBallMesh.setAttribute('position', gameBallMeshX + ' ' + gameBallMeshY + ' ' + gameBallMeshZ);
 				
+				if(gameIsOn == 0)
+				{
+					checkIfStart();
+				}
+	
+				gamePaddle.setAttribute('position', gamePaddleX + ' ' + gamePaddleY + ' ' + gamePaddleZ);
+				gameBall.setAttribute('position', gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
 				
 			}, intervalLength);
 			
@@ -415,6 +423,7 @@
 			<a-mixin id="red" material="color: red"></a-mixin>
 			<a-mixin id="green" material="color: green"></a-mixin>
 			<a-mixin id="blue" material="color: blue; opacity: 0.5"></a-mixin>
+			<a-mixin id="url-red" material="color: #d63959"></a-mixin>
 			<a-mixin id="cube" geometry="primitive: box"></a-mixin>
 		</a-assets>
 		
@@ -427,15 +436,12 @@
 			
 		<!-- sky color. -->
 		<!--<a-sky color="#000000"></a-sky>-->
-		<a-sky src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/city.jpg"></a-sky>
+		<a-sky src="city.jpg"></a-sky>
 		
 		<!-- Set camera starting position. -->
 		<a-entity position="0 0 3.8">
 			<a-camera look-controls id="myCamera">
 				<a-cursor id="cursor" material="color: gray; opacity: 0.5">
-					<!--event-set__1="_event: mouseenter; color: springgreen"
-					event-set__2="_event: mouseleave; color: black"
-					raycaster="objects: .all">-->
 				</a-cursor>
 			</a-camera>
 		</a-entity>
