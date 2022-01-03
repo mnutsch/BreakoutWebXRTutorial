@@ -1,4 +1,4 @@
-# Tutorial: Make WebXR Games With A-Frame
+# Tutorial: How to Make WebXR Games With A-Frame
 
 ![Breakout WebXR animation](img/breakoutWebXR_.gif)
 
