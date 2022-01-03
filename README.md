@@ -12,6 +12,7 @@ I wrote the original version of this tutorial about 5 years ago. Back then the A
 
 WebXR apps get accessed over the internet as web pages. For that reason the first step in the process is to create a basic HTML page.
 
+`
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,13 +23,16 @@ WebXR apps get accessed over the internet as web pages. For that reason the firs
 <body>
 </body>
 </html>
+`
 
 ## Step 2: Add the A-Frame library
 
 A-Frame is a JavaScript library which makes it easier to create WebXR apps. Add this using a <script> tag inside the <head> section of the HTML.
 
+`
 <!-- Basic A-Frame library -->
 <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+`
 
 ## Step 3: Set up Game Elements
 
@@ -36,13 +40,16 @@ Most of the elements in our game will be dynamic and change as part of the game.
 
 The a-scene element has to be in the body of the HTML. All the other A-Frame elements will get placed inside of it.
 
+`
 <a-scene>	
 </a-scene>	
+`
 
 Mixins are a way of defining attributes for a group of objects without declaring the attributes on each of those objects.
 
 Instead of using Mixins you could define the attributes directly. This doesn’t seem super useful to me, but it’s part of the A-Frame framework, so I included it in this tutorial.
 
+`
 <!-- Mixins. -->
 <a-assets>
 	<a-mixin id="red" material="color: red"></a-mixin>
@@ -51,17 +58,22 @@ Instead of using Mixins you could define the attributes directly. This doesn’t
 	<a-mixin id="url-red" material="color: #d63959"></a-mixin>
 	<a-mixin id="cube" geometry="primitive: box"></a-mixin>
 </a-assets>
+`
 
 To help the player see the game area we are going to place flat planes behind and below the game area. These go in the <body> section. 
 
+`
 <!-- set game background planes. -->
 <a-plane position="0 0 -3" rotation="-90 0 0" width="4" height="8" color="#a0a0a0"></a-plane>
 <a-plane position="0 2 -5" rotation="0 0 0" width="4" height="4" color="#bfabce"></a-plane>
+`
 
 We could set the scene background to a flat color. A 360 degree image looks more interesting, so I added in an example image provided by Mozilla. This is done with an element called <a-sky>.
 
+`
 <!-- sky color. -->
 <a-sky src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/city.jpg"></a-sky>
+`
 
 We need to specify where the camera is at. To do this we add an A-Frame camera tag. 
 
@@ -69,11 +81,13 @@ We will set wasd-controls to disabled. This prevents the player from moving the 
 
 We will also included a setting for laser-controls. This will allow the user to interact with the app using a laser style VR controller.
 
+`
 <!-- Set camera and controller starting position. -->
 <a-entity position="0 0 3.8">
   <a-camera look-controls wasd-controls="enabled: false"></a-camera>
   <a-entity laser-controls="hand: right"></a-entity>
 </a-entity>
+`
 
 There will be some text that we display to the user. First there will be some text that shows “Start Game”. This will default to visible (opacity of 1) and disappear when the game starts. 
 
@@ -89,8 +103,10 @@ Each of these have a unique “id” attribute. The "id" attribute gets used to 
 
 The “Start Game” will have also have a special attribute, so that we can add A-Frame listeners to it. We will name this attribute “handle-start”. This is a unique name that we made up for this particular element.
 
+`
 <!-- set a plane to track where the user is pointing -->
 <a-plane id="moveTracker" color="#FFFFFF" rotation="0 0 0" position="0 0 -1.6" opacity="0" width="20" height="20" cursor-listener></a-plane>
+`
 
 There will be some text that we display to the user. First there will be some text that shows "Start Game". This will default to visible (opacity of 1) and disappear when the game starts.
 
@@ -106,6 +122,7 @@ Each of these have a unique "id" attribute. The "id" attribute gets used to chan
 
 The "Start Game" will have also have a special attribute, so that we can add A-Frame listeners to it. We will name this attribute "handle-start". This is a unique name that we made up for this particular element.
 
+`
 <!-- Start Game text -->
 <a-entity id="startGameText" text="font: mozillavr; width: 5; lineHeight: 50; letterSpacing: 5; color: green; value: Start" position="2.2 2 0.5" rotation="0 0 0" handle-start></a-entity>
 
@@ -120,21 +137,25 @@ The "Start Game" will have also have a special attribute, so that we can add A-F
 
 <!-- Score text -->
 <a-entity id="scoreText" text="font: mozillavr; width: 5; lineHeight: 50; letterSpacing: 5; color: blue; value: Score: 0" position="0 3.8 -0.8" rotation="0 0 0"></a-entity>
+`
 
 We will also add a paddle and a ball. These will be more interactive.  The paddle will be a rectangular box which the user can move back and forth. The ball will bounce around in the play area. These each have a unique ID attribute and also unique A-Frame handler attributes.
 
+`
 <!-- Add the game paddle -->
 <a-box id="gamePaddle" color="#42f4aa" position="0 0.3 -1" depth="0.2" height="0.2" width="1" handle-paddle></a-box>
 
 <!-- Add the game ball -->
 <a-sphere id="gameBall" color="#FFFFFF" radius="0.15" position="0 1.25 -1" handle-ball></a-box>
-      
+`
+
 We could specify a light source to influence how the game elements appear. I couldn't tell much of a difference with the light source specified, so I left this out. Refer to A-Frame's documentation if you would like to specify the light source location(s) for your app.
 
 We have most of our game elements defined. We want to also have rows of blocks that the game ball will break when it hits them. We could have defined these game blocks in the HTML like we did with the game paddle. We will add these elements through JavaScript to show how that to do it that way.
 
 First we will add a script section to the HTML. JavaScript code will go in this. We will initialize arrays of variables. These will store information about the game blocks. In programming best practices these variables would go inside functions and get passed as parameters. This is game is a simple app though, so we will use them as top level variables for simplicity's sake.
 
+`
 <script>		
   //initialize variables 
   
@@ -150,9 +171,11 @@ First we will add a script section to the HTML. JavaScript code will go in this.
   let blockColor = '#4CC3D9'; //the default color of the blocks (later this was changed to be dynamically generated)
 
 </script>
+`
 
 Next we will add a window.onload function in the JavaScript. Any code we put inside this function will run after the page is ready. Inside this function we are going to put code that appends our game blocks to the scene. In A-Frame we add boxes with a-box elements. We use JavaScript’s document.getElementById() method to identify the scene. Then we use JavaScript’s appendChild method to add the game blocks.
 
+`
 //wait until the page loads to perform the following
 window.onload = function (){
   //create the game blocks
@@ -230,15 +253,18 @@ window.onload = function (){
     gameBlocks[i].setAttribute('position', gameBlocksX[i] + ' ' + gameBlocksY[i] + ' ' + gameBlocksZ[i]);
   }
 }
+`
 
 ## Step 4: Add Sound
 
 We want the game to have some sound effects, so we will initializze audio files.
 
+`
 //initialize sound
 let soundWarp = new Audio('warp-sfx-6897.mp3');
 let soundImpact = new Audio('electronic-impact-soft-10019.mp3');
 let soundChime = new Audio('chime-sound-7143.mp3');
+`
 
 ## Step 5: Add JavaScript Game Logic
 
@@ -246,16 +272,21 @@ Now we are going to add a bunch of functions to the code. These functions are pi
 
 Note: In JavaScript there are lots of different ways to define a function. For example, you will sometimes see people write stuff like this: 
 
+`
 const myFunctionName () => {}
+`
 
 I learned to program in C++ and I like to use that style of function definition:
 
+`
 function myFunctionName() {}
+`
 
 Whatever style you like to use will work fine.
 
 First we will add a function that stops playing sounds. Later we will call this to stop sounds before a new sound needs to play.
 
+`
 //stop all of the sounds
 function stopAllSounds(){
   soundWarp.pause();
@@ -265,9 +296,11 @@ function stopAllSounds(){
   soundImpact.currentTime = 0;
   soundChime.currentTime = 0;
 }
+`
 
 Next we will have a function to detect if the player has broken all the blocks. We will use this to check if the player won the game.
 
+`
 //function to check if all blocks are broken, return true if so
 function checkBlocks(){
   let returnValue = 1;
@@ -277,17 +310,21 @@ function checkBlocks(){
   }
   return returnValue;
 }
+`
 
 We will add a function which will move the ball. Moving the ball happens by adding the ball’s velocity to the coordinates. Later we will will update the position attribute of the ball with the new coordinates.
 
+`
 function moveBall(){
   //move the game ball
   gameBallX = gameBallX + gameBallVelocityX;
   gameBallY = gameBallY + gameBallVelocityY;
 }
+`
 
 We will add a function to reset the location of the ball. To make the game more interesting we will randomize the X dimension of the game ball each time. Note how we use the setAttribute method to change information about the element.
 
+`
 //function to reset the ball position
 function resetBall(){
   gameBallX = Math.floor(Math.random() * ((rightBorder - 0.5) - (leftBorder + 0.5) + 1)) + (leftBorder + 0.5);
@@ -297,9 +334,11 @@ function resetBall(){
   gameBallVelocityY = 0.075;
   gameBall.setAttribute('position', gameBallX + ' ' + gameBallY + ' ' + gameBallZ);
 }
+`
 
 We will add a function to update the colors of the paddle. If the player’s laser cursor points at the paddle then we will change the color. I initially designed the game so that the player would grab the cursor and drag it back and forth. I later found that using the point without grabbing made for a better experience. I left the grab coloring in this code to show how to do it though, because it seems like it might be useful for other apps.
 
+`
 function updatePaddle(){
   if(boxGrabbed == true){
     gamePaddle.setAttribute('color', "#FFFF00");   
@@ -309,9 +348,11 @@ function updatePaddle(){
     gamePaddle.setAttribute('color', "#0000FF");
   }
 }
+`
 
 We will add a function to reset all the blocks. This will happen if the player starts a new game. The blocks don’t go anywhere when broken. Instead we will hide them by changing the opacity to 0. This function changes the opacity back to 1 to make them visible again. To make the game more interesting the blocks get assigned random colors.
 
+`
 //function to reset the blocks
 function resetBlocks(){
   for (i = 0; i < 12; i++) 
@@ -322,9 +363,11 @@ function resetBlocks(){
     gameBlocks[i].setAttribute('opacity', '1');
   }
 }
+`
 
 We will add a function to check for collisions of the game ball with different game elements. There is at least one open source library for detecting collisions between A-Frame elements. I found that library to be a bit complex for our simple app though. It turned out to easier to roll my own collision detection code. This next function checks for collisions.
 
+`
 function checkCollisions(){
   let startGameText = document.getElementById('startGameText');
   //checking border collisions
@@ -407,9 +450,11 @@ function checkCollisions(){
     gameBallVelocityY = gameBallVelocityY * -1; //make the ball bounce
   }
 }
+`
 
 The functions above need to interact with certain information throughout the game.  We will add variables to track that information used by the game code. I declared these as top level variables due to the simple nature of the app. (In large or complex apps you would pass this information back and forth to each function as parameters.)
 
+`
 let gameIsOn = 0; //whether the game is active, controls certain functionality
 let intervalLength = 25; //determines the speed of the game
 let topBorder = 3.5; //border of game area in the Y dimension
@@ -432,6 +477,7 @@ let gameBallZ = -1; //the position of the game ball in the Z dimension
 let gameBallVelocityX = 0.045; //how fast the game ball is moving in the X dimension
 let gameBallVelocityY = 0.075; //how fast the game ball is moving in the Y dimension
 let gameBallRadius = 0.15; //how fast the game ball is moving in the Z dimension
+`
 
 ## Step 6: Add A-Frame JavaScript Code
 
@@ -443,6 +489,7 @@ We will detect when the user points the laser cursor at the game paddle. For tha
 
 We will also detect if the user “grabs” the paddle, by holding down the controller button while pointing at the paddle. (This “grab” feature isn’t actually used to move the paddle in this final version, but it seems like a useful feature so I left the code for in for illustration.)
 
+`
 AFRAME.registerComponent('handle-paddle', {
   init: function () {
     let el = this.el;
@@ -479,9 +526,11 @@ AFRAME.registerComponent('handle-paddle', {
     updatePaddle();
   } 
 });
+`
 
 Next we will register a component and add listeners to detect where the laser cursor is pointing. For the mechanics of this game we want to find where the laser cursor intersects a plane that the paddle can move on. We added an invisble (opacity 0) plane with a unique attribute called “cursor-listener”. If the laser cursor intersects this plane, we will get the X coordinates of that intersection. If the game is on then we will also move the paddle to that location.
 
+`
 AFRAME.registerComponent('cursor-listener', {
   init: function () {
     this.el.addEventListener('raycaster-intersected', evt => {
@@ -517,9 +566,11 @@ AFRAME.registerComponent('cursor-listener', {
       }
   }
 });
+`
 
 After that, we want to detect when the user points the laser cursor at the “Start Game” text and clicks the controller button. Like before we do this by registering a component name which matches the unique attribute we game to the element. If the user points the laser cursor at the text, then we will change the color of the text. If the user clicks on the text while selecting it then it will start the game.
 
+`
 AFRAME.registerComponent('handle-start', {
   init: function () {
     let el = this.el;
@@ -569,9 +620,11 @@ AFRAME.registerComponent('handle-start', {
     });
   }
 });
+`
 
 Finally we add a game loop. A game contains logic that gets run continuously as the game goes on. In A-Frame this is done using the tick function. I found that I had to add some additional code using A-Frame's throttle method. Without this code then the game would run faster on some devices and slower on others. This method evens out the speed so that it runs at about the same pace for all devices.
 
+`
 AFRAME.registerComponent('handle-ball', {
   init: function () {
     this.throttledFunction = AFRAME.utils.throttle(this.gameLoop, gameLoopSpeed, this);
@@ -585,6 +638,7 @@ AFRAME.registerComponent('handle-ball', {
     this.throttledFunction();  // Called every frame.
   } 
 });
+`
 
 ## Step 7: Play the Game
 
