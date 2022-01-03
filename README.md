@@ -12,16 +12,16 @@ I wrote the original version of this tutorial about 5 years ago. Back then the A
 
 WebXR apps get accessed over the internet as web pages. For that reason the first step in the process is to create a basic HTML page.
 
-``<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Breakout VR Tutorial</title>
-<meta name="description" content="Breakout VR Tutorial">
-</head>
-<body>
-</body>
-</html>``
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>Breakout VR Tutorial</title>
+    <meta name="description" content="Breakout VR Tutorial">
+    </head>
+    <body>
+    </body>
+    </html>
 
 ## Step 2: Add the A-Frame library
 
