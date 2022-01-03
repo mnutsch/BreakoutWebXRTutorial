@@ -602,4 +602,5 @@ The steps to start the app are:
 5. You should now see the game in VR and be able to play it.
 
 A demo of the app can be found here: https://www.mattnutsch.com/breakoutwebxr/
+
 Full source code can be found here: https://github.com/mnutsch/BreakoutWebXRTutorial
