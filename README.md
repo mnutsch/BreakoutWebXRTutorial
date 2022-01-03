@@ -8,8 +8,6 @@ WebXR is a JavaScript API for creating virtual reality and augmented reality exp
 
 I wrote the original version of this tutorial about 5 years ago. Back then the A-Frame library was very experimental and the term "WebXR" didn't exist yet. The original tutorial did not include a controller, the user played the game by moving their head around. The A-Frame library and WebXR evolved an incredible amount since then. This update to the tutorial brings it up to the current stable release of A-Frame (version 1.2.0). The code was re-written to take advantage of many paradigms that now exist in A-Frame, such as event listeners and controllers. The game made in this tutorial requires a WebXR capable devices with a controller. The device I used to test this code is an HTC Vive Flow.
 
-(Play the Game!)
-
 ## Step 1: Create your HTML
 
 WebXR apps get accessed over the internet as web pages. For that reason the first step in the process is to create a basic HTML page.
