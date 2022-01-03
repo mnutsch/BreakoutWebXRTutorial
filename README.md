@@ -1,6 +1,6 @@
 # Tutorial: Make WebXR Games With A-Frame
 
-![Breakout WebXR animation](/img/breakoutWebXR.gif)
+![Breakout WebXR animation](img/breakoutWebXR.gif)
 
 ## Introduction:
 
